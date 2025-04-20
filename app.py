@@ -12,6 +12,7 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import numpy as np
 
 # Load the Iris dataset
 iris = datasets.load_iris()
@@ -32,15 +33,19 @@ X_pca = pca.fit_transform(X)
 kmeans = KMeans(n_clusters=k, random_state=0)
 labels = kmeans.fit_predict(X)
 
+# Assign a fixed color to each label index
+colors = cm.get_cmap('tab10', k)
+color_list = [colors(i) for i in range(k)]
+label_colors = np.array([color_list[label] for label in labels])
+
 # Plotting
 fig, ax = plt.subplots()
-scatter = ax.scatter(X_pca[:, 0], X_pca[:, 1], c=labels, cmap='tab10', s=50)
+scatter = ax.scatter(X_pca[:, 0], X_pca[:, 1], color=label_colors, s=50)
 
-# Create proper legend
-colors = cm.get_cmap('tab10', k)
+# Create fixed legend
 legend_labels = [f"Cluster {i}" for i in range(k)]
 handles = [plt.Line2D([0], [0], marker='o', color='w',
-                      markerfacecolor=colors(i), markersize=10)
+                      markerfacecolor=color_list[i], markersize=10)
            for i in range(k)]
 ax.legend(handles, legend_labels)
 
@@ -51,4 +56,5 @@ ax.set_ylabel("PCA2")
 
 # Display plot
 st.pyplot(fig)
+
 
