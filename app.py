@@ -44,7 +44,7 @@ scatter = ax.scatter(X_pca[:, 0], X_pca[:, 1], color=label_colors, s=50)
 
 # Create fixed legend
 legend_labels = [f"Cluster {i}" for i in range(k)]
-handles = [plt.Line2D([0], [0], marker='o', color='w',
+handles = [plt.Line2D([0], [1], marker='o', color='w',
                       markerfacecolor=color_list[i], markersize=10)
            for i in range(k)]
 ax.legend(handles, legend_labels)
