@@ -23,17 +23,17 @@ st.title("🔍 K-Means Clustering App with Iris Dataset")
 
 # Sidebar - Number of clusters
 st.sidebar.header("Configure Clustering")
-k = st.sidebar.slider("Select number of clusters (K)", 2, 10, 3)
+k = st.sidebar.slider("Select number of clusters (K)", 2, 10, 4)  # Default to 4 as in image
 
 # PCA for 2D visualization
-pca = PCA(2)
+pca = PCA(n_components=2)
 X_pca = pca.fit_transform(X)
 
 # KMeans clustering
 kmeans = KMeans(n_clusters=k, random_state=0)
 labels = kmeans.fit_predict(X)
 
-# Assign a fixed color to each label index
+# Assign fixed color for each cluster label
 colors = cm.get_cmap('tab10', k)
 color_list = [colors(i) for i in range(k)]
 label_colors = np.array([color_list[label] for label in labels])
@@ -42,19 +42,20 @@ label_colors = np.array([color_list[label] for label in labels])
 fig, ax = plt.subplots()
 scatter = ax.scatter(X_pca[:, 0], X_pca[:, 1], color=label_colors, s=50)
 
-# Create fixed legend
+# Legend
 legend_labels = [f"Cluster {i}" for i in range(k)]
-handles = [plt.Line2D([0], [1], marker='o', color='w',
+handles = [plt.Line2D([0], [0], marker='o', color='w',
                       markerfacecolor=color_list[i], markersize=10)
            for i in range(k)]
-ax.legend(handles, legend_labels)
+ax.legend(handles, legend_labels, loc='lower right')
 
-# Labels and title
+# Axis labels and title
 ax.set_title("Clusters (2D PCA Projection)")
 ax.set_xlabel("PCA1")
 ax.set_ylabel("PCA2")
 
-# Display plot
+# Display the plot
 st.pyplot(fig)
+
 
 
