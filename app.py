@@ -7,55 +7,47 @@ Created on Sun Apr 20 15:44:28 2025
 
 import streamlit as st
 import pandas as pd
-from sklearn import datasets
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from sklearn.datasets import load_iris
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import numpy as np
 
-# Load the Iris dataset
-iris = datasets.load_iris()
-X = iris.data
 
-# App title
+# Page title
 st.title("🔍 K-Means Clustering App with Iris Dataset")
+
+# Load dataset
+iris = load_iris()
+X = pd.DataFrame(iris.data, columns=iris.feature_names)
 
 # Sidebar - Number of clusters
 st.sidebar.header("Configure Clustering")
-k = st.sidebar.slider("Select number of clusters (K)", 2, 10, 4)  # Default to 4 as in image
+k = st.sidebar.slider("Select number of clusters (k)", 2, 10, 3)
 
-# PCA for 2D visualization
+# Run K-Means
+kmeans = KMeans(n_clusters=k, random_state=42)
+kmeans.fit(X)
+labels = kmeans.labels_
+
+# Dimensionality reduction for visualization
 pca = PCA(n_components=2)
-X_pca = pca.fit_transform(X)
+reduced = pca.fit_transform(X)
+reduced_df = pd.DataFrame(reduced, columns=["PCA1", "PCA2"])
+reduced_df["Cluster"] = labels
 
-# KMeans clustering
-kmeans = KMeans(n_clusters=k, random_state=0)
-labels = kmeans.fit_predict(X)
-
-# Assign fixed color for each cluster label
-colors = cm.get_cmap('tab10', k)
-color_list = [colors(i) for i in range(k)]
-label_colors = np.array([color_list[label] for label in labels])
-
-# Plotting
+# Plot clusters
 fig, ax = plt.subplots()
-scatter = ax.scatter(X_pca[:, 0], X_pca[:, 1], color=label_colors, s=50)
-
-# Legend
-legend_labels = [f"Cluster {i}" for i in range(k)]
-handles = [plt.Line2D([0], [0], marker='o', color='w',
-                      markerfacecolor=color_list[i], markersize=10)
-           for i in range(k)]
-ax.legend(handles, legend_labels, loc='lower right')
-
-# Axis labels and title
+for cluster in range(k):
+    cluster_data = reduced_df[reduced_df["Cluster"] == cluster]
+    ax.scatter(cluster_data["PCA1"], cluster_data["PCA2"], label=f"Cluster {cluster}")
 ax.set_title("Clusters (2D PCA Projection)")
 ax.set_xlabel("PCA1")
 ax.set_ylabel("PCA2")
+ax.legend()
 
-# Display the plot
+# Show plot and data
 st.pyplot(fig)
+st.dataframe(reduced_df.head(10))
 
 
 
