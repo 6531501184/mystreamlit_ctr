@@ -22,7 +22,7 @@ X = pd.DataFrame(iris.data, columns=iris.feature_names)
 
 # Sidebar - Number of clusters
 st.sidebar.header("Configure Clustering")
-k = st.sidebar.slider("Select number of clusters (k)", 2, 10, 3)
+k = st.sidebar.slider("Select number of clusters (k)", 2, 10, 4)
 
 # Run K-Means
 kmeans = KMeans(n_clusters=k, random_state=42)
